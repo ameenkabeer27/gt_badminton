@@ -34,7 +34,6 @@ function saveAndUpdateGroupName(groupIndex, name) {
     let groupNames = JSON.parse(localStorage.getItem('groupNames')) || {};
     groupNames[groupIndex] = name;
     localStorage.setItem('groupNames', JSON.stringify(groupNames));
-
     const heading = document.getElementById(`group-heading-${groupIndex}`);
     if (heading) {
         heading.textContent = name || `Group ${String.fromCharCode(64 + groupIndex)}`;
@@ -45,7 +44,6 @@ function addTeam(groupIndex) {
     const input = document.getElementById(`team-input-${groupIndex}`);
     const teamName = input.value.trim();
     if (!teamName) return;
-
     const list = document.getElementById(`team-list-${groupIndex}`);
     const li = document.createElement('li');
     li.textContent = teamName;
@@ -69,14 +67,12 @@ function generateFixtures(groupIndex) {
         alert('Need at least 2 teams to generate fixtures.');
         return;
     }
-
     let fixtures = [];
     for (let i = 0; i < teams.length; i++) {
         for (let j = i + 1; j < teams.length; j++) {
             fixtures.push({ team1: teams[i], team2: teams[j], score1: '', score2: '' });
         }
     }
-
     fixtures = fixtures.sort(() => Math.random() - 0.5);
 
     saveFixtures(groupIndex, fixtures);
@@ -90,7 +86,7 @@ function displayFixtures(groupIndex, fixtures) {
         const div = document.createElement('div');
         div.className = 'fixture';
         div.innerHTML = `
-            <span>${fix.team1} vs ${fix.team2}:</span>
+            <span class="team-names">${fix.team1} vs ${fix.team2}</span>
             <input type="text" placeholder="Score1" value="${fix.score1}" id="score1-${groupIndex}-${idx}">
             <span>-</span>
             <input type="text" placeholder="Score2" value="${fix.score2}" id="score2-${groupIndex}-${idx}">
@@ -111,7 +107,6 @@ function updateScores(groupIndex) {
     getTeams(groupIndex).forEach(team => {
         stats[team] = { points: 0, scoreWon: 0, scoreAgainst: 0, avgPoints: 0 };
     });
-
     fixtures.forEach(fix => {
         if (fix.score1 && fix.score2) {
             const s1 = parseInt(fix.score1);
@@ -126,7 +121,6 @@ function updateScores(groupIndex) {
             }
         }
     });
-
     Object.keys(stats).forEach(team => {
         const sWon = stats[team].scoreWon;
         const sAgainst = stats[team].scoreAgainst;
@@ -134,7 +128,6 @@ function updateScores(groupIndex) {
     });
 
     displayStandings(groupIndex, stats);
-    // Show button to generate semi-finals after both Groups A and B have matches and scores
     if (document.getElementById('semiFinals-container')) {
         showGenerateSemiFinalsButton();
     }
@@ -160,7 +153,6 @@ function displayStandings(groupIndex, stats) {
     });
 }
 
-// Semi-finals and Final logic
 function showGenerateSemiFinalsButton() {
     const semiBtnExists = document.getElementById('generate-semi-btn');
     if (!semiBtnExists) {
@@ -189,7 +181,6 @@ function generateSemiFinals() {
         getTeams(groupIndex).forEach(team => {
             stats[team] = { points: 0, scoreWon: 0, scoreAgainst: 0, avgPoints: 0 };
         });
-
         const fixtures = getFixtures(groupIndex);
         fixtures.forEach(fix => {
             if (fix.score1 && fix.score2) {
@@ -205,20 +196,17 @@ function generateSemiFinals() {
                 }
             }
         });
-
         Object.keys(stats).forEach(team => {
             const sWon = stats[team].scoreWon;
             const sAgainst = stats[team].scoreAgainst;
             stats[team].avgPoints = sAgainst > 0 ? (sWon / sAgainst).toFixed(4) : "0.0000";
         });
-
         const teamsSorted = Object.keys(stats).sort((a, b) => {
             if (stats[b].points !== stats[a].points) {
                 return stats[b].points - stats[a].points;
             }
             return parseFloat(stats[b].avgPoints) - parseFloat(stats[a].avgPoints);
         });
-
         return teamsSorted.slice(0, 2);
     }
 
@@ -234,7 +222,6 @@ function generateSemiFinals() {
         { team1: groupA[0], team2: groupB[1], score1: '', score2: '' },
         { team1: groupB[0], team2: groupA[1], score1: '', score2: '' }
     ];
-
     localStorage.setItem('semiFinalFixtures', JSON.stringify(semiFinalFixtures));
     displaySemiFinals(semiFinalFixtures);
 }
@@ -246,7 +233,7 @@ function displaySemiFinals(fixtures) {
         const div = document.createElement('div');
         div.className = 'fixture';
         div.innerHTML = `
-            <span>${fix.team1} vs ${fix.team2}:</span>
+            <span class="team-names">${fix.team1} vs ${fix.team2}</span>
             <input type="text" placeholder="Score1" value="${fix.score1}" id="semi-score1-${idx}">
             <span>-</span>
             <input type="text" placeholder="Score2" value="${fix.score2}" id="semi-score2-${idx}">
@@ -257,7 +244,6 @@ function displaySemiFinals(fixtures) {
     btn.textContent = 'Update Semi Final Scores';
     btn.onclick = updateSemiFinalScores;
     container.appendChild(btn);
-
     document.getElementById('final-container').innerHTML = '';
 }
 
@@ -268,7 +254,6 @@ function updateSemiFinalScores() {
         fix.score2 = document.getElementById(`semi-score2-${idx}`).value;
     });
     localStorage.setItem('semiFinalFixtures', JSON.stringify(fixtures));
-
     let winners = [];
     fixtures.forEach((fix) => {
         const s1 = parseInt(fix.score1);
@@ -278,7 +263,6 @@ function updateSemiFinalScores() {
             else if (s2 > s1) winners.push(fix.team2);
         }
     });
-
     if (winners.length === 2) {
         generateFinals(winners);
     } else {
@@ -289,20 +273,17 @@ function updateSemiFinalScores() {
 function generateFinals(finalists) {
     const container = document.getElementById('final-container');
     container.innerHTML = '<h3>Final Match</h3>';
-
     const fix = { team1: finalists[0], team2: finalists[1], score1: '', score2: '' };
     localStorage.setItem('finalFixture', JSON.stringify(fix));
-
     const div = document.createElement('div');
     div.className = 'fixture';
     div.innerHTML = `
-        <span>${fix.team1} vs ${fix.team2}:</span>
+        <span class="team-names">${fix.team1} vs ${fix.team2}</span>
         <input type="text" placeholder="Score1" value="${fix.score1}" id="final-score1">
         <span>-</span>
         <input type="text" placeholder="Score2" value="${fix.score2}" id="final-score2">
     `;
     container.appendChild(div);
-
     const btn = document.createElement('button');
     btn.textContent = 'Update Final Score';
     btn.onclick = updateFinalScore;
@@ -312,28 +293,22 @@ function generateFinals(finalists) {
 function updateFinalScore() {
     const final = JSON.parse(localStorage.getItem('finalFixture')) || null;
     if (!final) return;
-
     final.score1 = document.getElementById('final-score1').value;
     final.score2 = document.getElementById('final-score2').value;
-
     localStorage.setItem('finalFixture', JSON.stringify(final));
-
     const s1 = parseInt(final.score1);
     const s2 = parseInt(final.score2);
-
     let winner = '';
     if (!isNaN(s1) && !isNaN(s2)) {
         if (s1 > s2) winner = final.team1;
         else if (s2 > s1) winner = final.team2;
     }
-
     const container = document.getElementById('final-container');
     container.innerHTML = '<h3>Final Match</h3>';
     const div = document.createElement('div');
     div.className = 'fixture';
-    div.innerHTML = `${final.team1} vs ${final.team2}: ${final.score1} - ${final.score2}`;
+    div.innerHTML = `<span class="team-names">${final.team1} vs ${final.team2}: ${final.score1} - ${final.score2}</span>`;
     container.appendChild(div);
-
     if (winner) {
         const winnerDiv = document.createElement('div');
         winnerDiv.style = 'margin-top: 10px; font-weight: bold; color: green;';
@@ -345,16 +320,12 @@ function updateFinalScore() {
 function loadSemiFinalsAndFinal() {
     const semiFinalsContainer = document.getElementById('semiFinals-container');
     const finalContainer = document.getElementById('final-container');
-
-    // Load semifinals
     const semiFinalFixtures = JSON.parse(localStorage.getItem('semiFinalFixtures')) || [];
     if(semiFinalFixtures.length > 0) {
         displaySemiFinals(semiFinalFixtures);
     } else {
         semiFinalsContainer.innerHTML = '';
     }
-
-    // Load final
     const finalFixture = JSON.parse(localStorage.getItem('finalFixture')) || null;
     if(finalFixture) {
         const div = document.createElement('div');
@@ -363,13 +334,12 @@ function loadSemiFinalsAndFinal() {
         const fixtureDiv = document.createElement('div');
         fixtureDiv.className = 'fixture';
         fixtureDiv.innerHTML = `
-            <span>${finalFixture.team1} vs ${finalFixture.team2}:</span>
+            <span class="team-names">${finalFixture.team1} vs ${finalFixture.team2}</span>
             <input type="text" placeholder="Score1" value="${finalFixture.score1}" id="final-score1">
             <span>-</span>
             <input type="text" placeholder="Score2" value="${finalFixture.score2}" id="final-score2">
         `;
         finalContainer.appendChild(fixtureDiv);
-
         const btn = document.createElement('button');
         btn.textContent = 'Update Final Score';
         btn.onclick = updateFinalScore;
@@ -429,14 +399,12 @@ function loadGroups() {
 function loadGroupNamesAndTeams() {
     const groupNames = JSON.parse(localStorage.getItem('groupNames')) || {};
     const groups = JSON.parse(localStorage.getItem('groups')) || {};
-
     for (let i = 1; i <= Object.keys(groupNames).length; i++) {
         const nameInput = document.getElementById(`group-name-${i}`);
         if (nameInput && groupNames[i]) {
             nameInput.value = groupNames[i];
             saveAndUpdateGroupName(i, groupNames[i]);
         }
-
         const list = document.getElementById(`team-list-${i}`);
         if (list && groups[i]) {
             groups[i].forEach(team => {
@@ -445,7 +413,6 @@ function loadGroupNamesAndTeams() {
                 list.appendChild(li);
             });
         }
-
         const fixtures = getFixtures(i);
         if (fixtures.length > 0) displayFixtures(i, fixtures);
     }
