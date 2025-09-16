@@ -5,22 +5,18 @@ body {
     background-color: #f4f4f4;
     color: #333;
 }
-
 header {
     text-align: center;
     margin-bottom: 20px;
 }
-
 h1, h2 {
     color: #007bff;
 }
-
 #stats {
     display: flex;
     justify-content: space-around;
     margin-bottom: 40px;
 }
-
 .stat {
     background: white;
     padding: 20px;
@@ -29,42 +25,34 @@ h1, h2 {
     text-align: center;
     width: 20%;
 }
-
 .stat span {
     font-size: 1.2em;
     display: block;
 }
-
 .stat p {
     font-size: 2em;
     margin: 10px 0 0;
 }
-
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
 }
-
 th, td {
     padding: 10px;
     border: 1px solid #ddd;
     text-align: left;
 }
-
 th {
     background-color: #007bff;
     color: white;
 }
-
 footer {
     text-align: center;
     margin-top: 40px;
     font-size: 0.9em;
     color: #666;
 }
-
-/* Responsive for mobile */
 @media (max-width: 768px) {
     #stats {
         flex-direction: column;
@@ -74,23 +62,18 @@ footer {
         margin-bottom: 10px;
     }
 }
-
-/* Enhanced group management styles for alignment and width */
 #group-management {
     margin: 20px 0;
     text-align: center;
 }
-
 #group-management label {
     font-weight: bold;
 }
-
 #group-management input {
     width: 60px;
     margin: 0 10px;
     padding: 5px;
 }
-
 #group-management button {
     padding: 5px 10px;
     background-color: #007bff;
@@ -99,7 +82,6 @@ footer {
     cursor: pointer;
     margin: 0 5px;
 }
-
 .group {
     background: white;
     padding: 15px;
@@ -111,15 +93,12 @@ footer {
     flex-direction: column;
     align-items: stretch;
 }
-
 .group h3 {
     margin: 0 0 10px;
     color: #007bff;
     text-align: center;
 }
-
-.group input[type=text],
-.group input[type=number] {
+.group input[type=text], .group input[type=number] {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -127,7 +106,6 @@ footer {
     border-radius: 4px;
     border: 1px solid #ccc;
 }
-
 .group button {
     padding: 10px;
     margin-top: 5px;
@@ -138,7 +116,6 @@ footer {
     font-weight: bold;
     transition: background-color 0.3s ease;
 }
-
 .generate-fixtures {
     background-color: #17a2b8;
     color: white;
@@ -146,7 +123,6 @@ footer {
 .generate-fixtures:hover {
     background-color: #138496;
 }
-
 .update-scores {
     background-color: #dc3545;
     color: white;
@@ -154,65 +130,8 @@ footer {
 .update-scores:hover {
     background-color: #b02a37;
 }
-
-.clear-teams,
-.reset-all {
+.clear-teams, .reset-all {
     background-color: #6c757d;
     color: white;
 }
-.clear-teams:hover,
-.reset-all:hover {
-    background-color: #5a6268;
-}
-
-#groups-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-#fixtures-container {
-    margin-top: 10px;
-}
-
-.fixture {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 12px;
-    margin-bottom: 12px;
-    flex-wrap: nowrap;
-}
-
-.fixture span, .fixture strong {
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.fixture input {
-    width: 60px;
-    padding: 5px;
-    text-align: center;
-    flex-shrink: 0;
-}
-
-.group-standings table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.group-standings th, .group-standings td {
-    border: 1px solid #ddd;
-    padding: 6px;
-    text-align: center;
-}
-
-.group-standings thead {
-    background-color: #007bff;
-    color: white;
-}
-
-.group-standings tbody tr.top-two {
-    background-color: #d4edda;
-    font-weight: bold;
-}
+.clear-teams:hover, .
