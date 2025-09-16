@@ -134,4 +134,53 @@ footer {
     background-color: #6c757d;
     color: white;
 }
-.clear-teams:hover, .
+.clear-teams:hover, .reset-all:hover {
+    background-color: #5a6268;
+}
+#groups-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+#fixtures-container {
+    margin-top: 10px;
+}
+
+.fixture {
+    display: grid;
+    grid-template-columns: 2.5fr 0.8fr 0.3fr 0.8fr;
+    align-items: center;
+    column-gap: 8px;
+    margin-bottom: 12px;
+}
+.fixture span.team-names {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.fixture input {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    text-align: center;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.group-standings table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.group-standings th, .group-standings td {
+    border: 1px solid #ddd;
+    padding: 6px;
+    text-align: center;
+}
+.group-standings thead {
+    background-color: #007bff;
+    color: white;
+}
+.group-standings tbody tr.top-two {
+    background-color: #d4edda;
+    font-weight: bold;
+}
