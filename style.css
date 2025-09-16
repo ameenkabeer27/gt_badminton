@@ -148,16 +148,16 @@ footer {
 /* FIXTURE ROWS: Score boxes perfectly aligned horizontally */
 .fixture {
     display: grid;
-    grid-template-columns: 2fr 0.8fr 0.3fr 0.8fr;
+    grid-template-columns: 4fr 0.8fr 0.3fr 0.8fr;
     align-items: center;
     column-gap: 8px;
     margin-bottom: 12px;
 }
 
 .fixture span.team-names {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal; /* nowrap */
+    overflow: visible;
+    text-overflow: unset; /* ellipsis */
 }
 
 .fixture input {
