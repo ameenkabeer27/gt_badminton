@@ -12,7 +12,8 @@ function createGroups() {
         const groupDiv = document.createElement('div');
         groupDiv.className = 'group';
         groupDiv.innerHTML = `
-            <input type="text" name="group-name" placeholder="Enter Group Name (e.g., Group A)" id="group-name-${i}" onchange="saveGroupName(${i}, this.value)">
+            <h3 id="group-heading-${i}">Group ${String.fromCharCode(64 + i)}</h3> <!-- Default like Group A -->
+            <input type="text" name="group-name" placeholder="Enter Group Name (e.g., Group Elite)" id="group-name-${i}" oninput="saveAndUpdateGroupName(${i}, this.value)">
             <input type="text" placeholder="Team Name" id="team-input-${i}">
             <button onclick="addTeam(${i})">Add Team</button>
             <ul id="team-list-${i}"></ul>
@@ -24,10 +25,17 @@ function createGroups() {
     loadGroupNamesAndTeams(); // Load saved names and teams
 }
 
-function saveGroupName(groupIndex, name) {
+function saveAndUpdateGroupName(groupIndex, name) {
+    // Save to localStorage
     let groupNames = JSON.parse(localStorage.getItem('groupNames')) || {};
     groupNames[groupIndex] = name;
     localStorage.setItem('groupNames', JSON.stringify(groupNames));
+
+    // Update the heading dynamically
+    const heading = document.getElementById(`group-heading-${groupIndex}`);
+    if (heading) {
+        heading.textContent = name || `Group ${String.fromCharCode(64 + groupIndex)}`; // Fallback to default if empty
+    }
 }
 
 function addTeam(groupIndex) {
@@ -69,6 +77,7 @@ function loadGroupNamesAndTeams() {
         const nameInput = document.getElementById(`group-name-${i}`);
         if (nameInput && groupNames[i]) {
             nameInput.value = groupNames[i];
+            saveAndUpdateGroupName(i, groupNames[i]); // Update heading
         }
 
         const list = document.getElementById(`team-list-${i}`);
