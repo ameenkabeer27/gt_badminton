@@ -261,4 +261,202 @@ function displaySemiFinals(fixtures) {
     document.getElementById('final-container').innerHTML = '';
 }
 
-function
+function updateSemiFinalScores() {
+    let fixtures = JSON.parse(localStorage.getItem('semiFinalFixtures')) || [];
+    fixtures.forEach((fix, idx) => {
+        fix.score1 = document.getElementById(`semi-score1-${idx}`).value;
+        fix.score2 = document.getElementById(`semi-score2-${idx}`).value;
+    });
+    localStorage.setItem('semiFinalFixtures', JSON.stringify(fixtures));
+
+    let winners = [];
+    fixtures.forEach((fix) => {
+        const s1 = parseInt(fix.score1);
+        const s2 = parseInt(fix.score2);
+        if (!isNaN(s1) && !isNaN(s2)) {
+            if (s1 > s2) winners.push(fix.team1);
+            else if (s2 > s1) winners.push(fix.team2);
+        }
+    });
+
+    if (winners.length === 2) {
+        generateFinals(winners);
+    } else {
+        alert('Enter valid scores for both Semi Final matches to generate Final.');
+    }
+}
+
+function generateFinals(finalists) {
+    const container = document.getElementById('final-container');
+    container.innerHTML = '<h3>Final Match</h3>';
+
+    const fix = { team1: finalists[0], team2: finalists[1], score1: '', score2: '' };
+    localStorage.setItem('finalFixture', JSON.stringify(fix));
+
+    const div = document.createElement('div');
+    div.className = 'fixture';
+    div.innerHTML = `
+        <span>${fix.team1} vs ${fix.team2}:</span>
+        <input type="text" placeholder="Score1" value="${fix.score1}" id="final-score1">
+        <span>-</span>
+        <input type="text" placeholder="Score2" value="${fix.score2}" id="final-score2">
+    `;
+    container.appendChild(div);
+
+    const btn = document.createElement('button');
+    btn.textContent = 'Update Final Score';
+    btn.onclick = updateFinalScore;
+    container.appendChild(btn);
+}
+
+function updateFinalScore() {
+    const final = JSON.parse(localStorage.getItem('finalFixture')) || null;
+    if (!final) return;
+
+    final.score1 = document.getElementById('final-score1').value;
+    final.score2 = document.getElementById('final-score2').value;
+
+    localStorage.setItem('finalFixture', JSON.stringify(final));
+
+    const s1 = parseInt(final.score1);
+    const s2 = parseInt(final.score2);
+
+    let winner = '';
+    if (!isNaN(s1) && !isNaN(s2)) {
+        if (s1 > s2) winner = final.team1;
+        else if (s2 > s1) winner = final.team2;
+    }
+
+    const container = document.getElementById('final-container');
+    container.innerHTML = '<h3>Final Match</h3>';
+    const div = document.createElement('div');
+    div.className = 'fixture';
+    div.innerHTML = `${final.team1} vs ${final.team2}: ${final.score1} - ${final.score2}`;
+    container.appendChild(div);
+
+    if (winner) {
+        const winnerDiv = document.createElement('div');
+        winnerDiv.style = 'margin-top: 10px; font-weight: bold; color: green;';
+        winnerDiv.textContent = `Winner: ${winner}`;
+        container.appendChild(winnerDiv);
+    }
+}
+
+function loadSemiFinalsAndFinal() {
+    const semiFinalsContainer = document.getElementById('semiFinals-container');
+    const finalContainer = document.getElementById('final-container');
+
+    // Load semifinals
+    const semiFinalFixtures = JSON.parse(localStorage.getItem('semiFinalFixtures')) || [];
+    if(semiFinalFixtures.length > 0) {
+        displaySemiFinals(semiFinalFixtures);
+    } else {
+        semiFinalsContainer.innerHTML = '';
+    }
+
+    // Load final
+    const finalFixture = JSON.parse(localStorage.getItem('finalFixture')) || null;
+    if(finalFixture) {
+        const div = document.createElement('div');
+        div.className = 'fixture';
+        finalContainer.innerHTML = '<h3>Final Match</h3>';
+        const fixtureDiv = document.createElement('div');
+        fixtureDiv.className = 'fixture';
+        fixtureDiv.innerHTML = `
+            <span>${finalFixture.team1} vs ${finalFixture.team2}:</span>
+            <input type="text" placeholder="Score1" value="${finalFixture.score1}" id="final-score1">
+            <span>-</span>
+            <input type="text" placeholder="Score2" value="${finalFixture.score2}" id="final-score2">
+        `;
+        finalContainer.appendChild(fixtureDiv);
+
+        const btn = document.createElement('button');
+        btn.textContent = 'Update Final Score';
+        btn.onclick = updateFinalScore;
+        finalContainer.appendChild(btn);
+    } else {
+        finalContainer.innerHTML = '';
+    }
+}
+
+function clearTeams() {
+    localStorage.removeItem('groups');
+    localStorage.removeItem('fixtures');
+    loadGroups();
+    updateTotalTeams();
+}
+
+function resetAll() {
+    localStorage.clear();
+    document.getElementById('groups-container').innerHTML = '';
+    document.getElementById('standings-container').innerHTML = '';
+    updateTotalTeams();
+    clearSemiFinalsAndFinal();
+}
+
+function clearSemiFinalsAndFinal() {
+    localStorage.removeItem('semiFinalFixtures');
+    localStorage.removeItem('finalFixture');
+    document.getElementById('semiFinals-container').innerHTML = '';
+    document.getElementById('final-container').innerHTML = '';
+}
+
+function getTeams(groupIndex) {
+    const groups = JSON.parse(localStorage.getItem('groups')) || {};
+    return groups[groupIndex] || [];
+}
+
+function saveFixtures(groupIndex, fixtures) {
+    let allFixtures = JSON.parse(localStorage.getItem('fixtures')) || {};
+    allFixtures[groupIndex] = fixtures;
+    localStorage.setItem('fixtures', JSON.stringify(allFixtures));
+}
+
+function getFixtures(groupIndex) {
+    const allFixtures = JSON.parse(localStorage.getItem('fixtures')) || {};
+    return allFixtures[groupIndex] || [];
+}
+
+function loadGroups() {
+    const savedNum = localStorage.getItem('numGroups');
+    if (savedNum) {
+        document.getElementById('num-groups').value = savedNum;
+        createGroups();
+    }
+    loadSemiFinalsAndFinal();
+}
+
+function loadGroupNamesAndTeams() {
+    const groupNames = JSON.parse(localStorage.getItem('groupNames')) || {};
+    const groups = JSON.parse(localStorage.getItem('groups')) || {};
+
+    for (let i = 1; i <= Object.keys(groupNames).length; i++) {
+        const nameInput = document.getElementById(`group-name-${i}`);
+        if (nameInput && groupNames[i]) {
+            nameInput.value = groupNames[i];
+            saveAndUpdateGroupName(i, groupNames[i]);
+        }
+
+        const list = document.getElementById(`team-list-${i}`);
+        if (list && groups[i]) {
+            groups[i].forEach(team => {
+                const li = document.createElement('li');
+                li.textContent = team;
+                list.appendChild(li);
+            });
+        }
+
+        const fixtures = getFixtures(i);
+        if (fixtures.length > 0) displayFixtures(i, fixtures);
+    }
+    updateTotalTeams();
+}
+
+function updateTotalTeams() {
+    const groups = JSON.parse(localStorage.getItem('groups')) || {};
+    let total = 0;
+    for (let group in groups) {
+        total += groups[group].length;
+    }
+    document.getElementById('total-teams').textContent = total;
+}
