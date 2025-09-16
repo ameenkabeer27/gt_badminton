@@ -13,7 +13,52 @@
     </header>
 
     <section id="group-management">
-        <h2>Create Groups and Add Teams</h2>
-        <label for="num-groups">Number of Groups:</label>
-        <input type="number" id="num-groups" min="1" max="10" value="4">
-        <button onclick
+    <h2>Create Groups and Add Teams</h2>
+    <label for="num-groups">Number of Groups:</label>
+    <input type="number" id="num-groups" min="1" max="10" value="4">
+    <button onclick="createGroups()">Create Groups</button>
+    <div id="groups-container"></div>
+</section>
+
+    <section id="stats">
+        <!-- Existing stats content here -->
+        <div class="stat">
+            <span>👥 Total Teams</span>
+            <p id="total-teams">0</p>
+        </div>
+        <div class="stat">
+            <span>🏸 Total Matches</span>
+            <p>0</p> <!-- Update as needed -->
+        </div>
+        <div class="stat">
+            <span>✅ Completed</span>
+            <p>0</p>
+        </div>
+        <div class="stat">
+            <span>⏳ Pending</span>
+            <p>0</p>
+        </div>
+    </section>
+
+    <section id="standings">
+        <h2>Standings</h2>
+        <!-- Existing standings table here; can integrate with groups later -->
+    </section>
+
+    <section id="fixtures">
+        <h2>Fixtures</h2>
+        <!-- Existing fixtures list here -->
+    </section>
+
+    <section id="analytics">
+        <h2>Analytics</h2>
+        <!-- Existing analytics here -->
+    </section>
+
+    <footer>
+        <p>💻 Managed and Created by [Your Name] | 📅 September 2025 | 🏸 GT Badminton System</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
