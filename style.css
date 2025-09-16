@@ -69,4 +69,51 @@
     font-weight: bold;
 }
 
+.fixture {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+}
+
+.fixture input {
+    width: 60px;
+    margin: 0 5px;
+}
+
+.fixture button {
+    margin-left: 10px;
+    background-color: #ffc107;
+    color: black;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.group-standings {
+    margin-top: 10px;
+}
+
+.group-standings table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.group-standings th, .group-standings td {
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+
+.group button.generate-fixtures {
+    background-color: #17a2b8;
+    color: white;
+    margin-top: 10px;
+}
+
+.group button.update-scores {
+    background-color: #dc3545;
+    color: white;
+    margin-top: 10px;
+}
+
+
 /* Existing responsive media queries here */
