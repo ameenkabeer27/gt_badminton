@@ -145,28 +145,27 @@ footer {
 #fixtures-container {
     margin-top: 10px;
 }
-
+/* FIXTURE ROWS: Score boxes perfectly aligned horizontally */
 .fixture {
-    display: grid;
-    grid-template-columns: 2.5fr 0.8fr 0.3fr 0.8fr;
+    display: flex;
     align-items: center;
-    column-gap: 8px;
+    gap: 12px;
     margin-bottom: 12px;
+    flex-wrap: nowrap;
 }
 .fixture span.team-names {
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex-grow: 1;
 }
 .fixture input {
-    width: 100%;
+    width: 50px;
     padding: 5px;
     box-sizing: border-box;
     text-align: center;
     border-radius: 4px;
     border: 1px solid #ccc;
+    flex-shrink: 0;
 }
-
 .group-standings table {
     width: 100%;
     border-collapse: collapse;
