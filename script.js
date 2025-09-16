@@ -107,32 +107,55 @@ function updateScores(groupIndex) {
     });
     saveFixtures(groupIndex, fixtures);
 
-    // Calculate points
-    let points = {};
-    getTeams(groupIndex).forEach(team => points[team] = 0);
+    // Calculate stats for each team
+    let stats = {};
+    getTeams(groupIndex).forEach(team => {
+        stats[team] = { points: 0, scoreWon: 0, scoreAgainst: 0, avgPoints: 0 };
+    });
 
     fixtures.forEach(fix => {
         if (fix.score1 && fix.score2) {
             const s1 = parseInt(fix.score1);
             const s2 = parseInt(fix.score2);
             if (!isNaN(s1) && !isNaN(s2)) {
-                if (s1 > s2) points[fix.team1] += 2;
-                else if (s2 > s1) points[fix.team2] += 2;
+                // Update scores won and against
+                stats[fix.team1].scoreWon += s1;
+                stats[fix.team1].scoreAgainst += s2;
+                stats[fix.team2].scoreWon += s2;
+                stats[fix.team2].scoreAgainst += s1;
+                // Points: 2 for winner
+                if (s1 > s2) stats[fix.team1].points += 2;
+                else if (s2 > s1) stats[fix.team2].points += 2;
             }
         }
     });
 
-    displayStandings(groupIndex, points);
+    // Compute average points
+    Object.keys(stats).forEach(team => {
+        const sWon = stats[team].scoreWon;
+        const sAgainst = stats[team].scoreAgainst;
+        stats[team].avgPoints = sAgainst > 0 ? (sWon / sAgainst).toFixed(2) : "0.00";
+    });
+
+    displayStandings(groupIndex, stats);
 }
 
-function displayStandings(groupIndex, points) {
+function displayStandings(groupIndex, stats) {
     const container = document.getElementById(`standings-${groupIndex}`);
-    container.innerHTML = '<h4>Standings</h4><table><thead><tr><th>Team</th><th>Points</th></tr></thead><tbody></tbody></table>';
+    container.innerHTML = '<h4>Standings</h4><table><thead><tr><th>Team</th><th>Points</th><th>Average Points</th></tr></thead><tbody></tbody></table>';
     const tbody = container.querySelector('tbody');
 
-    Object.keys(points).sort((a, b) => points[b] - points[a]).forEach(team => {
+    // Sort: Points (desc), then Average Points (desc)
+    const teamsSorted = Object.keys(stats).sort((a, b) => {
+        if (stats[b].points !== stats[a].points) {
+            return stats[b].points - stats[a].points;
+        }
+        return parseFloat(stats[b].avgPoints) - parseFloat(stats[a].avgPoints);
+    });
+
+    teamsSorted.forEach(team => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${team}</td><td>${points[team]}</td>`;
+        tr.innerHTML = `<td>${team}</td><td>${stats[team].points}</td><td>${stats[team].avgPoints}</td>`;
         tbody.appendChild(tr);
     });
 }
