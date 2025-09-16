@@ -24,6 +24,7 @@ function createGroups() {
             <div class="group-standings" id="standings-${i}"></div>
         `;
         container.appendChild(groupDiv);
+        updateDashboardStats();
     }
 
     localStorage.setItem('numGroups', numGroups);
@@ -52,6 +53,7 @@ function addTeam(groupIndex) {
     input.value = '';
     saveTeam(groupIndex, teamName);
     updateTotalTeams();
+    updateDashboardStats();
 }
 
 function saveTeam(groupIndex, teamName) {
@@ -131,6 +133,7 @@ function updateScores(groupIndex) {
     if (document.getElementById('semiFinals-container')) {
         showGenerateSemiFinalsButton();
     }
+    updateDashboardStats();
 }
 
 function displayStandings(groupIndex, stats) {
@@ -427,3 +430,26 @@ function updateTotalTeams() {
     }
     document.getElementById('total-teams').textContent = total;
 }
+
+function updateDashboardStats() {
+  // You might be storing your teams differently – adjust if needed
+  const teams = JSON.parse(localStorage.getItem('teams')) || [];
+  const totalTeams = teams.length;
+
+  // Same for fixtures — if you use a different variable name adjust here
+  const fixtures = JSON.parse(localStorage.getItem('fixtures')) || [];
+  const totalMatches = fixtures.length;
+
+  // Completed matches: both scores entered
+  const completed = fixtures.filter(f => f.score1 !== "" && f.score2 !== "").length;
+  const pending = totalMatches - completed;
+
+  // Update DOM
+  document.getElementById('total-teams').textContent = totalTeams;
+  document.getElementById('total-matches').textContent = totalMatches;
+  document.getElementById('completed-matches').textContent = completed;
+  document.getElementById('pending-matches').textContent = pending;
+}
+
+document.addEventListener('DOMContentLoaded', updateDashboardStats);
+
