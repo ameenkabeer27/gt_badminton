@@ -12,7 +12,7 @@ function createGroups() {
         const groupDiv = document.createElement('div');
         groupDiv.className = 'group';
         groupDiv.innerHTML = `
-            <h3>Group ${String.fromCharCode(64 + i)}</h3> <!-- A, B, C, etc. -->
+            <input type="text" name="group-name" placeholder="Enter Group Name (e.g., Group A)" id="group-name-${i}" onchange="saveGroupName(${i}, this.value)">
             <input type="text" placeholder="Team Name" id="team-input-${i}">
             <button onclick="addTeam(${i})">Add Team</button>
             <ul id="team-list-${i}"></ul>
@@ -21,7 +21,13 @@ function createGroups() {
     }
 
     localStorage.setItem('numGroups', numGroups); // Save number of groups
-    loadTeams(); // Load any saved teams
+    loadGroupNamesAndTeams(); // Load saved names and teams
+}
+
+function saveGroupName(groupIndex, name) {
+    let groupNames = JSON.parse(localStorage.getItem('groupNames')) || {};
+    groupNames[groupIndex] = name;
+    localStorage.setItem('groupNames', JSON.stringify(groupNames));
 }
 
 function addTeam(groupIndex) {
@@ -55,9 +61,16 @@ function loadGroups() {
     }
 }
 
-function loadTeams() {
+function loadGroupNamesAndTeams() {
+    const groupNames = JSON.parse(localStorage.getItem('groupNames')) || {};
     const groups = JSON.parse(localStorage.getItem('groups')) || {};
-    for (let i = 1; i <= Object.keys(groups).length; i++) {
+
+    for (let i = 1; i <= Object.keys(groupNames).length; i++) {
+        const nameInput = document.getElementById(`group-name-${i}`);
+        if (nameInput && groupNames[i]) {
+            nameInput.value = groupNames[i];
+        }
+
         const list = document.getElementById(`team-list-${i}`);
         if (list && groups[i]) {
             groups[i].forEach(team => {
