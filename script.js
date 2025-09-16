@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadGroups();
     updateTotalTeams();
+    loadSemiFinalsAndFinal();
 });
 
 function createGroups() {
@@ -89,9 +90,9 @@ function displayFixtures(groupIndex, fixtures) {
         const div = document.createElement('div');
         div.className = 'fixture';
         div.innerHTML = `
-            ${fix.team1} vs ${fix.team2}: 
+            <span>${fix.team1} vs ${fix.team2}:</span>
             <input type="text" placeholder="Score1" value="${fix.score1}" id="score1-${groupIndex}-${idx}">
-            -
+            <span>-</span>
             <input type="text" placeholder="Score2" value="${fix.score2}" id="score2-${groupIndex}-${idx}">
         `;
         container.appendChild(div);
@@ -133,6 +134,10 @@ function updateScores(groupIndex) {
     });
 
     displayStandings(groupIndex, stats);
+    // Show button to generate semi-finals after both Groups A and B have matches and scores
+    if (document.getElementById('semiFinals-container')) {
+        showGenerateSemiFinalsButton();
+    }
 }
 
 function displayStandings(groupIndex, stats) {
@@ -147,82 +152,113 @@ function displayStandings(groupIndex, stats) {
         return parseFloat(stats[b].avgPoints) - parseFloat(stats[a].avgPoints);
     });
 
-    teamsSorted.forEach(team => {
+    teamsSorted.forEach((team, index) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${team}</td><td>${stats[team].points}</td><td>${stats[team].avgPoints}</td>`;
+        if(index < 2) tr.classList.add('top-two');
         tbody.appendChild(tr);
     });
 }
 
-function getTeams(groupIndex) {
-    const groups = JSON.parse(localStorage.getItem('groups')) || {};
-    return groups[groupIndex] || [];
-}
-
-function saveFixtures(groupIndex, fixtures) {
-    let allFixtures = JSON.parse(localStorage.getItem('fixtures')) || {};
-    allFixtures[groupIndex] = fixtures;
-    localStorage.setItem('fixtures', JSON.stringify(allFixtures));
-}
-
-function getFixtures(groupIndex) {
-    const allFixtures = JSON.parse(localStorage.getItem('fixtures')) || {};
-    return allFixtures[groupIndex] || [];
-}
-
-function clearTeams() {
-    localStorage.removeItem('groups');
-    localStorage.removeItem('fixtures');
-    loadGroups();
-    updateTotalTeams();
-}
-
-function resetAll() {
-    localStorage.clear();
-    document.getElementById('groups-container').innerHTML = '';
-    document.getElementById('standings-container').innerHTML = '';
-    updateTotalTeams();
-}
-
-function loadGroups() {
-    const savedNum = localStorage.getItem('numGroups');
-    if (savedNum) {
-        document.getElementById('num-groups').value = savedNum;
-        createGroups();
+// Semi-finals and Final logic
+function showGenerateSemiFinalsButton() {
+    const semiBtnExists = document.getElementById('generate-semi-btn');
+    if (!semiBtnExists) {
+        const btn = document.createElement('button');
+        btn.textContent = 'Generate Semi Finals';
+        btn.id = 'generate-semi-btn';
+        btn.className = 'generate-fixtures';
+        btn.style = 'margin-bottom:15px;';
+        btn.onclick = generateSemiFinals;
+        document.getElementById('semiFinals-container').appendChild(btn);
     }
 }
 
-function loadGroupNamesAndTeams() {
-    const groupNames = JSON.parse(localStorage.getItem('groupNames')) || {};
+function generateSemiFinals() {
     const groups = JSON.parse(localStorage.getItem('groups')) || {};
+    const semiFinalsContainer = document.getElementById('semiFinals-container');
+    semiFinalsContainer.innerHTML = '';
 
-    for (let i = 1; i <= Object.keys(groupNames).length; i++) {
-        const nameInput = document.getElementById(`group-name-${i}`);
-        if (nameInput && groupNames[i]) {
-            nameInput.value = groupNames[i];
-            saveAndUpdateGroupName(i, groupNames[i]);
-        }
-
-        const list = document.getElementById(`team-list-${i}`);
-        if (list && groups[i]) {
-            groups[i].forEach(team => {
-                const li = document.createElement('li');
-                li.textContent = team;
-                list.appendChild(li);
-            });
-        }
-
-        const fixtures = getFixtures(i);
-        if (fixtures.length > 0) displayFixtures(i, fixtures);
+    if (Object.keys(groups).length < 2) {
+        semiFinalsContainer.innerHTML = '<p>Need at least 2 groups for Semi Finals.</p>';
+        return;
     }
-    updateTotalTeams();
+
+    function getTopTwoPositions(groupIndex) {
+        const stats = {};
+        getTeams(groupIndex).forEach(team => {
+            stats[team] = { points: 0, scoreWon: 0, scoreAgainst: 0, avgPoints: 0 };
+        });
+
+        const fixtures = getFixtures(groupIndex);
+        fixtures.forEach(fix => {
+            if (fix.score1 && fix.score2) {
+                const s1 = parseInt(fix.score1);
+                const s2 = parseInt(fix.score2);
+                if (!isNaN(s1) && !isNaN(s2)) {
+                    stats[fix.team1].scoreWon += s1;
+                    stats[fix.team1].scoreAgainst += s2;
+                    stats[fix.team2].scoreWon += s2;
+                    stats[fix.team2].scoreAgainst += s1;
+                    if (s1 > s2) stats[fix.team1].points += 2;
+                    else if (s2 > s1) stats[fix.team2].points += 2;
+                }
+            }
+        });
+
+        Object.keys(stats).forEach(team => {
+            const sWon = stats[team].scoreWon;
+            const sAgainst = stats[team].scoreAgainst;
+            stats[team].avgPoints = sAgainst > 0 ? (sWon / sAgainst).toFixed(4) : "0.0000";
+        });
+
+        const teamsSorted = Object.keys(stats).sort((a, b) => {
+            if (stats[b].points !== stats[a].points) {
+                return stats[b].points - stats[a].points;
+            }
+            return parseFloat(stats[b].avgPoints) - parseFloat(stats[a].avgPoints);
+        });
+
+        return teamsSorted.slice(0, 2);
+    }
+
+    const groupA = getTopTwoPositions(1);
+    const groupB = getTopTwoPositions(2);
+
+    if (groupA.length < 2 || groupB.length < 2) {
+        semiFinalsContainer.innerHTML = '<p>Both Group A and Group B need at least two teams with scores to generate Semi Finals.</p>';
+        return;
+    }
+
+    const semiFinalFixtures = [
+        { team1: groupA[0], team2: groupB[1], score1: '', score2: '' },
+        { team1: groupB[0], team2: groupA[1], score1: '', score2: '' }
+    ];
+
+    localStorage.setItem('semiFinalFixtures', JSON.stringify(semiFinalFixtures));
+    displaySemiFinals(semiFinalFixtures);
 }
 
-function updateTotalTeams() {
-    const groups = JSON.parse(localStorage.getItem('groups')) || {};
-    let total = 0;
-    for (let group in groups) {
-        total += groups[group].length;
-    }
-    document.getElementById('total-teams').textContent = total;
+function displaySemiFinals(fixtures) {
+    const container = document.getElementById('semiFinals-container');
+    container.innerHTML = '<h3>Semi Final Matches</h3>';
+    fixtures.forEach((fix, idx) => {
+        const div = document.createElement('div');
+        div.className = 'fixture';
+        div.innerHTML = `
+            <span>${fix.team1} vs ${fix.team2}:</span>
+            <input type="text" placeholder="Score1" value="${fix.score1}" id="semi-score1-${idx}">
+            <span>-</span>
+            <input type="text" placeholder="Score2" value="${fix.score2}" id="semi-score2-${idx}">
+        `;
+        container.appendChild(div);
+    });
+    const btn = document.createElement('button');
+    btn.textContent = 'Update Semi Final Scores';
+    btn.onclick = updateSemiFinalScores;
+    container.appendChild(btn);
+
+    document.getElementById('final-container').innerHTML = '';
 }
+
+function
