@@ -62,4 +62,11 @@
     margin: 5px 0;
 }
 
+.group input[name="group-name"] {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
 /* Existing responsive media queries here */
