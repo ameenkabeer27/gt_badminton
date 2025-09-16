@@ -1,76 +1,65 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
-    color: #333;
-}
+/* Existing styles here */
 
-header {
+#group-management {
+    margin: 20px 0;
     text-align: center;
-    margin-bottom: 20px;
 }
 
-h1, h2 {
-    color: #007bff;
+#group-management label {
+    font-weight: bold;
 }
 
-#stats {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 40px;
+#group-management input {
+    width: 60px;
+    margin: 0 10px;
+    padding: 5px;
 }
 
-.stat {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    text-align: center;
-    width: 20%;
-}
-
-.stat span {
-    font-size: 1.2em;
-    display: block;
-}
-
-.stat p {
-    font-size: 2em;
-    margin: 10px 0 0;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-th, td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-th {
+#group-management button {
+    padding: 5px 10px;
     background-color: #007bff;
     color: white;
+    border: none;
+    cursor: pointer;
 }
 
-footer {
-    text-align: center;
-    margin-top: 40px;
-    font-size: 0.9em;
-    color: #666;
+#groups-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
 }
 
-/* Responsive for mobile */
-@media (max-width: 768px) {
-    #stats {
-        flex-direction: column;
-    }
-    .stat {
-        width: 100%;
-        margin-bottom: 10px;
-    }
+.group {
+    background: white;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 200px;
 }
+
+.group input {
+    width: 70%;
+    padding: 5px;
+}
+
+.group button {
+    padding: 5px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.group ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.group li {
+    margin: 5px 0;
+}
+
+/* Existing responsive media queries here */
