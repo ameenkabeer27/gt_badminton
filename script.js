@@ -76,7 +76,6 @@ function generateFixtures(groupIndex) {
         }
     }
 
-    // Randomize order
     fixtures = fixtures.sort(() => Math.random() - 0.5);
 
     saveFixtures(groupIndex, fixtures);
@@ -107,7 +106,6 @@ function updateScores(groupIndex) {
     });
     saveFixtures(groupIndex, fixtures);
 
-    // Calculate stats for each team
     let stats = {};
     getTeams(groupIndex).forEach(team => {
         stats[team] = { points: 0, scoreWon: 0, scoreAgainst: 0, avgPoints: 0 };
@@ -118,23 +116,20 @@ function updateScores(groupIndex) {
             const s1 = parseInt(fix.score1);
             const s2 = parseInt(fix.score2);
             if (!isNaN(s1) && !isNaN(s2)) {
-                // Update scores won and against
                 stats[fix.team1].scoreWon += s1;
                 stats[fix.team1].scoreAgainst += s2;
                 stats[fix.team2].scoreWon += s2;
                 stats[fix.team2].scoreAgainst += s1;
-                // Points: 2 for winner
                 if (s1 > s2) stats[fix.team1].points += 2;
                 else if (s2 > s1) stats[fix.team2].points += 2;
             }
         }
     });
 
-    // Compute average points
     Object.keys(stats).forEach(team => {
         const sWon = stats[team].scoreWon;
         const sAgainst = stats[team].scoreAgainst;
-        stats[team].avgPoints = sAgainst > 0 ? (sWon / sAgainst).toFixed(2) : "0.00";
+        stats[team].avgPoints = sAgainst > 0 ? (sWon / sAgainst).toFixed(4) : "0.0000";
     });
 
     displayStandings(groupIndex, stats);
@@ -145,7 +140,6 @@ function displayStandings(groupIndex, stats) {
     container.innerHTML = '<h4>Standings</h4><table><thead><tr><th>Team</th><th>Points</th><th>Average Points</th></tr></thead><tbody></tbody></table>';
     const tbody = container.querySelector('tbody');
 
-    // Sort: Points (desc), then Average Points (desc)
     const teamsSorted = Object.keys(stats).sort((a, b) => {
         if (stats[b].points !== stats[a].points) {
             return stats[b].points - stats[a].points;
@@ -179,7 +173,7 @@ function getFixtures(groupIndex) {
 function clearTeams() {
     localStorage.removeItem('groups');
     localStorage.removeItem('fixtures');
-    loadGroups(); // Reload to clear displays
+    loadGroups();
     updateTotalTeams();
 }
 
