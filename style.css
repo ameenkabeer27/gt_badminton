@@ -1,5 +1,81 @@
-/* Existing styles here */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
 
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1, h2 {
+    color: #007bff;
+}
+
+#stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+}
+
+.stat {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 20%;
+}
+
+.stat span {
+    font-size: 1.2em;
+    display: block;
+}
+
+.stat p {
+    font-size: 2em;
+    margin: 10px 0 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+    #stats {
+        flex-direction: column;
+    }
+    .stat {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+/* Enhanced group management styles for alignment */
 #group-management {
     margin: 20px 0;
     text-align: center;
@@ -21,13 +97,7 @@
     color: white;
     border: none;
     cursor: pointer;
-}
-
-#groups-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 20px;
+    margin: 0 5px; /* Space between top buttons */
 }
 
 .group {
@@ -36,61 +106,87 @@
     margin: 10px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    width: 200px;
+    width: 300px; /* Fixed width for uniformity */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 
-.group input {
-    width: 70%;
-    padding: 5px;
+.group h3 {
+    margin: 0 0 10px;
+    color: #007bff;
+    text-align: center;
+}
+
+.group input[type=text],
+.group input[type=number] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
 
 .group button {
-    padding: 5px;
-    background-color: #28a745;
-    color: white;
+    padding: 10px;
+    margin: 5px 0 10px 0;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
-}
-
-.group ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 10px;
-}
-
-.group li {
-    margin: 5px 0;
-}
-
-.group input[name="group-name"] {
-    width: 100%;
-    padding: 5px;
-    margin-bottom: 10px;
     font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.generate-fixtures {
+    background-color: #17a2b8;
+    color: white;
+}
+.generate-fixtures:hover {
+    background-color: #138496;
+}
+
+.update-scores {
+    background-color: #dc3545;
+    color: white;
+}
+.update-scores:hover {
+    background-color: #b02a37;
+}
+
+.clear-teams,
+.reset-all {
+    background-color: #6c757d;
+    color: white;
+}
+.clear-teams:hover,
+.reset-all:hover {
+    background-color: #5a6268;
+}
+
+#groups-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#fixtures-container {
+    margin-top: 10px;
 }
 
 .fixture {
-    margin: 10px 0;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
 }
 
 .fixture input {
-    width: 60px;
-    margin: 0 5px;
-}
-
-.fixture button {
-    margin-left: 10px;
-    background-color: #ffc107;
-    color: black;
-    border: none;
+    width: 50px;
     padding: 5px;
-    cursor: pointer;
-}
-
-.group-standings {
-    margin-top: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    text-align: center;
 }
 
 .group-standings table {
@@ -99,21 +195,12 @@
 }
 
 .group-standings th, .group-standings td {
-    padding: 5px;
     border: 1px solid #ddd;
+    padding: 6px;
+    text-align: center;
 }
 
-.group button.generate-fixtures {
-    background-color: #17a2b8;
+.group-standings thead {
+    background-color: #007bff;
     color: white;
-    margin-top: 10px;
 }
-
-.group button.update-scores {
-    background-color: #dc3545;
-    color: white;
-    margin-top: 10px;
-}
-
-
-/* Existing responsive media queries here */
