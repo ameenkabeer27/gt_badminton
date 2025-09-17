@@ -79,6 +79,7 @@ function generateFixtures(groupIndex) {
 
     saveFixtures(groupIndex, fixtures);
     displayFixtures(groupIndex, fixtures);
+    updateDashboardStats();
 }
 
 function displayFixtures(groupIndex, fixtures) {
@@ -227,6 +228,7 @@ function generateSemiFinals() {
     ];
     localStorage.setItem('semiFinalFixtures', JSON.stringify(semiFinalFixtures));
     displaySemiFinals(semiFinalFixtures);
+    updateDashboardStats();
 }
 
 function displaySemiFinals(fixtures) {
@@ -271,6 +273,7 @@ function updateSemiFinalScores() {
     } else {
         alert('Enter valid scores for both Semi Final matches to generate Final.');
     }
+    updateDashboardStats();
 }
 
 function generateFinals(finalists) {
@@ -318,6 +321,7 @@ function updateFinalScore() {
         winnerDiv.textContent = `Winner: ${winner}`;
         container.appendChild(winnerDiv);
     }
+    updateDashboardStats();
 }
 
 function loadSemiFinalsAndFinal() {
@@ -357,6 +361,7 @@ function clearTeams() {
     localStorage.removeItem('fixtures');
     loadGroups();
     updateTotalTeams();
+    updateDashboardStats();
 }
 
 function resetAll() {
@@ -365,6 +370,7 @@ function resetAll() {
     document.getElementById('standings-container').innerHTML = '';
     updateTotalTeams();
     clearSemiFinalsAndFinal();
+    updateDashboardStats();
 }
 
 function clearSemiFinalsAndFinal() {
