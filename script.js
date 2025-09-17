@@ -454,14 +454,14 @@ function updateDashboardStats() {
 document.addEventListener('DOMContentLoaded', updateDashboardStats);
 
 function exportToExcel() {
-  // 1. Grab data from localStorage
+  // 1. Read from localStorage
   const groups = JSON.parse(localStorage.getItem('groups')) || {};
   const fixturesAll = JSON.parse(localStorage.getItem('fixtures')) || {};
+  // If you store semi-finals & finals, adjust keys here:
   const semiFinalFixtures = JSON.parse(localStorage.getItem('semiFinalFixtures')) || [];
   const finalFixture = JSON.parse(localStorage.getItem('finalFixture')) || null;
 
-  // 2. Prepare data arrays for each sheet
-  // Groups & Teams sheet
+  // 2. Groups sheet
   const groupsSheet = [["Group", "Team"]];
   Object.keys(groups).forEach(gIndex => {
     groups[gIndex].forEach(team => {
@@ -469,8 +469,10 @@ function exportToExcel() {
     });
   });
 
-  // Fixtures per group sheet (one sheet for all fixtures)
-  const fixturesSheet = [["Group", "Team 1", "Team 2", "Score 1", "Score 2"]];
+  // 3. Fixtures sheet
+  const fixturesSheet = [["Group/Stage", "Team 1", "Team 2", "Score 1", "Score 2"]];
+
+  // Add group fixtures
   Object.keys(fixturesAll).forEach(gIndex => {
     fixturesAll[gIndex].forEach(fix => {
       fixturesSheet.push([
@@ -483,16 +485,27 @@ function exportToExcel() {
     });
   });
 
-  // Semifinals
-  const semiSheet = [["Team 1", "Team 2", "Score 1", "Score 2"]];
-  semiFinalFixtures.forEach(fix => {
-    semiSheet.push([fix.team1, fix.team2, fix.score1, fix.score2]);
-  });
+  // Add a blank row + Semi-Finals header if exists
+  if (semiFinalFixtures.length > 0) {
+    fixturesSheet.push([]);
+    fixturesSheet.push(["Semi-Finals", "Team 1", "Team 2", "Score 1", "Score 2"]);
+    semiFinalFixtures.forEach(fix => {
+      fixturesSheet.push([
+        "Semi-Finals",
+        fix.team1,
+        fix.team2,
+        fix.score1,
+        fix.score2
+      ]);
+    });
+  }
 
-  // Final
-  const finalSheet = [["Team 1", "Team 2", "Score 1", "Score 2"]];
+  // Add a blank row + Final header if exists
   if (finalFixture) {
-    finalSheet.push([
+    fixturesSheet.push([]);
+    fixturesSheet.push(["Final", "Team 1", "Team 2", "Score 1", "Score 2"]);
+    fixturesSheet.push([
+      "Final",
       finalFixture.team1,
       finalFixture.team2,
       finalFixture.score1,
@@ -500,22 +513,14 @@ function exportToExcel() {
     ]);
   }
 
-  // 3. Build workbook
+  // 4. Build workbook
   const wb = XLSX.utils.book_new();
-  const wsGroups = XLSX.utils.aoa_to_sheet(groupsSheet);
-  XLSX.utils.book_append_sheet(wb, wsGroups, "Groups");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(groupsSheet), "Groups");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(fixturesSheet), "Fixtures");
 
-  const wsFixtures = XLSX.utils.aoa_to_sheet(fixturesSheet);
-  XLSX.utils.book_append_sheet(wb, wsFixtures, "Fixtures");
-
-  const wsSemi = XLSX.utils.aoa_to_sheet(semiSheet);
-  XLSX.utils.book_append_sheet(wb, wsSemi, "SemiFinals");
-
-  const wsFinal = XLSX.utils.aoa_to_sheet(finalSheet);
-  XLSX.utils.book_append_sheet(wb, wsFinal, "Final");
-
-  // 4. Trigger download
+  // 5. Download file
   XLSX.writeFile(wb, "tournament_data.xlsx");
 }
+
 
 
