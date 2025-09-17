@@ -186,3 +186,33 @@ footer {
     background-color: #d4edda;
     font-weight: bold;
 }
+
+/* Winner banner styles */
+#winner-banner {
+  display: none; /* hidden by default until a winner appears */
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffffff;
+  background: linear-gradient(90deg, #ffcc00, #ff6600);
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px auto;
+  width: 80%;
+  animation: pulse 1.5s infinite;
+  box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+}
+
+/* pulsing glow animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 102, 0, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+  }
+}
+
