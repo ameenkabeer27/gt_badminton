@@ -297,32 +297,68 @@ function generateFinals(finalists) {
 }
 
 function updateFinalScore() {
-    const final = JSON.parse(localStorage.getItem('finalFixture')) || null;
-    if (!final) return;
-    final.score1 = document.getElementById('final-score1').value;
-    final.score2 = document.getElementById('final-score2').value;
-    localStorage.setItem('finalFixture', JSON.stringify(final));
-    const s1 = parseInt(final.score1);
-    const s2 = parseInt(final.score2);
-    let winner = '';
-    if (!isNaN(s1) && !isNaN(s2)) {
-        if (s1 > s2) winner = final.team1;
-        else if (s2 > s1) winner = final.team2;
-    }
-    const container = document.getElementById('final-container');
-    container.innerHTML = '<h3>Final Match</h3>';
-    const div = document.createElement('div');
-    div.className = 'fixture';
-    div.innerHTML = `<span class="team-names">${final.team1} vs ${final.team2}: ${final.score1} - ${final.score2}</span>`;
-    container.appendChild(div);
-    if (winner) {
-        const winnerDiv = document.createElement('div');
-        winnerDiv.style = 'margin-top: 10px; font-weight: bold; color: green;';
-        winnerDiv.textContent = `Winner: ${winner}`;
-        container.appendChild(winnerDiv);
-    }
-    updateDashboardStats();
+  const final = JSON.parse(localStorage.getItem('finalFixture')) || null;
+  if (!final) return;
+
+  final.score1 = document.getElementById('final-score1').value;
+  final.score2 = document.getElementById('final-score2').value;
+  localStorage.setItem('finalFixture', JSON.stringify(final));
+
+  const s1 = parseInt(final.score1);
+  const s2 = parseInt(final.score2);
+  let winner = '';
+  if (!isNaN(s1) && !isNaN(s2)) {
+    if (s1 > s2) winner = final.team1;
+    else if (s2 > s1) winner = final.team2;
+  }
+
+  const container = document.getElementById('final-container');
+  container.innerHTML = '<h3>Final Match</h3>';
+  const div = document.createElement('div');
+  div.className = 'fixture';
+  div.innerHTML = `<span class="team-names">${final.team1} vs ${final.team2}: ${final.score1} - ${final.score2}</span>`;
+  container.appendChild(div);
+
+  if (winner) {
+    const winnerDiv = document.createElement('div');
+    winnerDiv.style = 'margin-top: 10px; font-weight: bold; color: green;';
+    winnerDiv.textContent = `Winner: ${winner}`;
+    container.appendChild(winnerDiv);
+
+    // 🏆 Show big winner banner
+    const banner = document.getElementById('winner-banner');
+    banner.textContent = `🏆 ${winner} WINS THE TOURNAMENT! 🏆`;
+    banner.style.display = 'block';
+
+    // 🎉 Start continuous confetti for 5 seconds
+    startConfettiCelebration(5000);
+  }
+
+  updateDashboardStats();
 }
+
+function startConfettiCelebration(duration) {
+  const end = Date.now() + duration;
+  (function frame() {
+    confetti({
+      particleCount: 5,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0, y: 0.6 }
+    });
+    confetti({
+      particleCount: 5,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1, y: 0.6 }
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  }());
+}
+
 
 function loadSemiFinalsAndFinal() {
     const semiFinalsContainer = document.getElementById('semiFinals-container');
