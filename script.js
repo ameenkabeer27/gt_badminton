@@ -453,3 +453,69 @@ function updateDashboardStats() {
 
 document.addEventListener('DOMContentLoaded', updateDashboardStats);
 
+function exportToExcel() {
+  // 1. Grab data from localStorage
+  const groups = JSON.parse(localStorage.getItem('groups')) || {};
+  const fixturesAll = JSON.parse(localStorage.getItem('fixtures')) || {};
+  const semiFinalFixtures = JSON.parse(localStorage.getItem('semiFinalFixtures')) || [];
+  const finalFixture = JSON.parse(localStorage.getItem('finalFixture')) || null;
+
+  // 2. Prepare data arrays for each sheet
+  // Groups & Teams sheet
+  const groupsSheet = [["Group", "Team"]];
+  Object.keys(groups).forEach(gIndex => {
+    groups[gIndex].forEach(team => {
+      groupsSheet.push([`Group ${gIndex}`, team]);
+    });
+  });
+
+  // Fixtures per group sheet (one sheet for all fixtures)
+  const fixturesSheet = [["Group", "Team 1", "Team 2", "Score 1", "Score 2"]];
+  Object.keys(fixturesAll).forEach(gIndex => {
+    fixturesAll[gIndex].forEach(fix => {
+      fixturesSheet.push([
+        `Group ${gIndex}`,
+        fix.team1,
+        fix.team2,
+        fix.score1,
+        fix.score2
+      ]);
+    });
+  });
+
+  // Semifinals
+  const semiSheet = [["Team 1", "Team 2", "Score 1", "Score 2"]];
+  semiFinalFixtures.forEach(fix => {
+    semiSheet.push([fix.team1, fix.team2, fix.score1, fix.score2]);
+  });
+
+  // Final
+  const finalSheet = [["Team 1", "Team 2", "Score 1", "Score 2"]];
+  if (finalFixture) {
+    finalSheet.push([
+      finalFixture.team1,
+      finalFixture.team2,
+      finalFixture.score1,
+      finalFixture.score2
+    ]);
+  }
+
+  // 3. Build workbook
+  const wb = XLSX.utils.book_new();
+  const wsGroups = XLSX.utils.aoa_to_sheet(groupsSheet);
+  XLSX.utils.book_append_sheet(wb, wsGroups, "Groups");
+
+  const wsFixtures = XLSX.utils.aoa_to_sheet(fixturesSheet);
+  XLSX.utils.book_append_sheet(wb, wsFixtures, "Fixtures");
+
+  const wsSemi = XLSX.utils.aoa_to_sheet(semiSheet);
+  XLSX.utils.book_append_sheet(wb, wsSemi, "SemiFinals");
+
+  const wsFinal = XLSX.utils.aoa_to_sheet(finalSheet);
+  XLSX.utils.book_append_sheet(wb, wsFinal, "Final");
+
+  // 4. Trigger download
+  XLSX.writeFile(wb, "tournament_data.xlsx");
+}
+
+
