@@ -432,26 +432,46 @@ function updateTotalTeams() {
 }
 
 function updateDashboardStats() {
-  // You might be storing your teams differently – adjust if needed
-  const teams = JSON.parse(localStorage.getItem('teams')) || [];
-  const totalTeams = teams.length;
+  // 1. Total teams across all groups
+  const groups = JSON.parse(localStorage.getItem('groups')) || {};
+  let totalTeams = 0;
+  Object.values(groups).forEach(arr => totalTeams += arr.length);
 
-  // Same for fixtures — if you use a different variable name adjust here
-  const fixtures = JSON.parse(localStorage.getItem('fixtures')) || [];
-  const totalMatches = fixtures.length;
+  // 2. Flatten all group fixtures
+  const fixturesObj = JSON.parse(localStorage.getItem('fixtures')) || {};
+  let allFixtures = [];
+  Object.values(fixturesObj).forEach(arr => allFixtures = allFixtures.concat(arr));
 
-  // Completed matches: both scores entered
-  const completed = fixtures.filter(f => f.score1 !== "" && f.score2 !== "").length;
+  // 3. Include semi-finals & final
+  const semiFinalFixtures = JSON.parse(localStorage.getItem('semiFinalFixtures')) || [];
+  if (semiFinalFixtures.length > 0) {
+    allFixtures = allFixtures.concat(semiFinalFixtures);
+  }
+  const finalFixture = JSON.parse(localStorage.getItem('finalFixture')) || null;
+  if (finalFixture) {
+    allFixtures.push(finalFixture);
+  }
+
+  // 4. Count matches & completed
+  const totalMatches = allFixtures.length;
+  const completed = allFixtures.filter(f => f.score1 !== "" && f.score2 !== "").length;
   const pending = totalMatches - completed;
 
-  // Update DOM
+  // 5. Update DOM
   document.getElementById('total-teams').textContent = totalTeams;
   document.getElementById('total-matches').textContent = totalMatches;
   document.getElementById('completed-matches').textContent = completed;
   document.getElementById('pending-matches').textContent = pending;
 }
 
-document.addEventListener('DOMContentLoaded', updateDashboardStats);
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadGroups();
+  updateTotalTeams();
+  loadSemiFinalsAndFinal();
+  updateDashboardStats();
+});
+
 
 function exportToExcel() {
   // 1. Read from localStorage
